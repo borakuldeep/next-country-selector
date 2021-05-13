@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "mapbox-gl": "^2.2.0",
+    "mdb-react-ui-kit": "^1.0.0-beta4",
     "next": "10.2.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

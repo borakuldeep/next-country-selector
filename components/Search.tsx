@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useContext, FormEvent } from "react";
 
+import { StoreContext } from "../store";
 import styles from "../styles/Search.module.css";
 
 const getSearchUrl = (country) =>
@@ -7,29 +8,45 @@ const getSearchUrl = (country) =>
 
 const Search = () => {
   const [country, setCountry] = useState("");
+  const [_, dispatch] = useContext(StoreContext);
 
-  const fetchData = (e) => {
+  const fetchData = async (e: FormEvent) => {
     e.preventDefault();
-    const URL = getSearchUrl(country);
-    try {
-      fetch(URL).then((res) => console.log("res: ", res.json())); // save results globally
-    } catch (err) {
-      console.error(err);
+    if (country) {
+      const URL = getSearchUrl(country);
+      try {
+        const response = await fetch(URL);
+        const countryData = await response.json();
+
+        // check for valid results
+        if (Array.isArray(countryData)) {
+          const payload = {
+            searchItems: countryData?.map((c) => c.name) || [],
+            searchDetails: countryData,
+          };
+
+          dispatch({ type: "SET_SEARCH_ITEMS", payload });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    } 
+    else {
+      dispatch({ type: "SET_SEARCH_ITEMS", payload: { searchItems: [], searchDetails: [] } });
     }
   };
 
   return (
-    <form className={styles.searchform} onSubmit={fetchData}>
+    <form className={`${styles.searchform}`} onSubmit={(evt) => fetchData(evt)}>
       <input
-        className={styles.searchinput}
+        className={`form-control ${styles.searchinput}`}
         type="text"
         placeholder="search country"
         onChange={(e) => setCountry(e.target.value)}
       />
-      <div className={styles.separator} />
-      <div>
+      <div className={styles.buttoncontainer}>
         <button
-          className={styles.searchbutton}
+          className={`btn btn-light ${styles.searchbutton}`}
           type="submit"
           title="search button"
         >
