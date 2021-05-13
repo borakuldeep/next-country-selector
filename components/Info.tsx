@@ -1,30 +1,79 @@
 import { useState, useContext, useEffect } from "react";
-import { MDBCollapse, MDBBtn } from "mdb-react-ui-kit";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+} from "recharts";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { StoreContext } from "../store";
 import styles from "../styles/Info.module.css";
 
+const style = {
+  top: "50%",
+  right: 0,
+  transform: "translate(0, -50%)",
+  lineHeight: "24px",
+};
+
 const Info = () => {
-  const [showShow, setShowShow] = useState(true);
+  const [expanded, setExpanded] = useState(true);
   const [state, _] = useContext(StoreContext);
 
-  const toggleShow = () => setShowShow(!showShow);
+  const data = [
+    { name: "Country A", population: 2423444 },
+    { name: "Country B", population: 242235 },
+    { name: "Country C", population: 5223340 },
+    { name: "Country D", population: 922322220 },
+    { name: "Country E", population: 1295210000 },
+  ];
+
+  const toggleShow = () => setExpanded(!expanded);
 
   useEffect(() => {
-      setShowShow(true);
-  }, [state.searchItems])
-
+    setExpanded(true);
+  }, [state.searchItems]);
 
   return state.searchItems.length ? (
     <div className={styles.infocontainer}>
-      <MDBBtn onClick={toggleShow}>Toggle Info</MDBBtn>
-      <MDBCollapse show={showShow}>
-        <div className={`card card-body ${styles.info}`}>
-          Some placeholder content for the collapse component. This panel is
-          hidden by default but revealed when the user activates the relevant
-          trigger.
-        </div>
-      </MDBCollapse>
+      <Accordion expanded={expanded} onChange={toggleShow}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="moreinfo"
+          id="moreinfo-header"
+        >
+          <Typography>More info</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className={`card card-body ${styles.info}`}>
+            <BarChart
+              width={350}
+              height={300}
+              data={state.searchDetails}
+              margin={{
+                top: 20,
+                right: 10,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <XAxis dataKey="name" stroke="#8884d8" />
+              <YAxis />
+              <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+              <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+              <Bar dataKey="population" fill="#8884d8" barSize={30} />
+            </BarChart>
+          </div>
+        </AccordionDetails>
+      </Accordion>
     </div>
   ) : null;
 };

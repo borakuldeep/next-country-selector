@@ -2,15 +2,18 @@
     position: absolute;
     top: 12%;
     left: 5%;
+    width: 400px;
+    opacity: 0.85;
 }
 
 .info {
     width: 400px;
     margin-top: 10px;
+    font-size: small;
 }
 
 @media only screen and (max-width: 420px) {
-    .info {
+    .info, .infocontainer {
         width: 320px;
     }
 }

@@ -19,10 +19,18 @@ const Map = ({data, center}) => {
       "YOUR API KEY",
   });
 
+  const zoomLevel = () => {
+    if(data.length === 1)
+      return 4;
+    else if(data.length === 2)
+      return 3;
+    return 2;
+  }
+
   return (
     <Map
-      style="mapbox://styles/mapbox/streets-v9"
-      zoom={[2]}
+      style="mapbox://styles/mapbox/navigation-night-v1"
+      zoom={[zoomLevel()]}
       center={[center[0],center[1]]}
       animationOptions={{
         duration: 500,
