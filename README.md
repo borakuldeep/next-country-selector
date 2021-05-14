@@ -24,7 +24,7 @@ The population info card can be collapsed ( for space constraints in mobile devi
 
 ## map box key
 Use your own mapbox api key if you want to run in dev mode.
-create next.config.js and export key like below:
+create next.config.js in root directory and export key like below:
 ```
 module.exports = {
     env: {
