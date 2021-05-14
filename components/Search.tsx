@@ -14,57 +14,82 @@ const Search = () => {
   const [country, setCountry] = useState("");
   const [_, dispatch] = useContext(StoreContext);
 
-  const fetchData = async (e: FormEvent) => {
-    e.preventDefault();
-    if (country) {
-      const URL = getSearchUrl(country);
+  const fetchData = async (
+    e: FormEvent = null,
+    countrySelected: string = ""
+  ) => {
+    e && e.preventDefault();
+
+    const seacrhCountry = countrySelected || country;
+    countrySelected !== "" && setCountry(countrySelected);
+
+    if (seacrhCountry) {
+      const URL = getSearchUrl(seacrhCountry);
       try {
         const response = await fetch(URL);
+
         const countryData = await response.json();
 
+        if (countryData.status === 404) {
+          dispatch({
+            type: "SET_ERROR",
+            payload: {
+              searchItems: [],
+              searchDetails: [],
+              error: "Country not found. Please try again.",
+            },
+          });
+        }
         // check for valid results
-        if (Array.isArray(countryData)) {
+        else if (Array.isArray(countryData)) {
           const payload = {
             searchItems: countryData?.map((c) => c.name) || [],
             searchDetails: countryData,
+            error: "",
           };
 
           dispatch({ type: "SET_SEARCH_ITEMS", payload });
         }
       } catch (err) {
-        console.error(err);
+        dispatch({
+          type: "SET_ERROR",
+          payload: {
+            searchItems: [],
+            searchDetails: [],
+            error: "Oops Something went wrong!!",
+          },
+        });
       }
     } else {
       dispatch({
         type: "SET_SEARCH_ITEMS",
-        payload: { searchItems: [], searchDetails: [] },
+        payload: { searchItems: [], searchDetails: [], error: "" },
       });
     }
   };
 
   return (
-    <form className={`${styles.searchform}`} onSubmit={(evt) => fetchData(evt)}>
-
+    <form className={`${styles.searchform}`} onSubmit={(e) => fetchData(e)}>
       <Autocomplete
         freeSolo
         id="free-solo-2-demo"
         disableClearable
         options={countryList.map((option) => option.name)}
         style={{ width: 300 }}
-        onChange={(e, val) => setCountry(val)}
+        onChange={(e, val) => fetchData(null, val)}
         renderInput={(params) => (
           <TextField
             {...params}
             className={styles.searchinput}
-            label="Select a country"
+            label="search a country..."
             onChange={(e) => setCountry(e.target.value)}
           />
         )}
       />
       <div className={styles.buttoncontainer}>
         <Button
-          variant={country?'outlined':null}
-          color={country?'primary':'inherit'}
+          variant={country ? "contained" : null}
+          color={country ? "primary" : "inherit"}
           type="submit"
           title="search button"
         >

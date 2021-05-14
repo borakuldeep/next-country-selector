@@ -1,12 +1,12 @@
-
-import React, {createContext, useReducer} from "react";
+import React, {createContext, useReducer, Dispatch} from "react";
 import Reducer from './reducer';
 import { IState } from '../types';
 
 
 const initialState: IState = {
     searchItems: [],
-    searchDetails: []
+    searchDetails: [],
+    error: ''
 };
 
 const Store = ({children}: React.PropsWithChildren<{}>) => {
@@ -18,5 +18,5 @@ const Store = ({children}: React.PropsWithChildren<{}>) => {
     )
 };
 
-export const StoreContext = createContext<IState>(initialState);
+export const StoreContext = createContext<[IState, Dispatch<{}>]>([initialState,() => {},]);
 export default Store;

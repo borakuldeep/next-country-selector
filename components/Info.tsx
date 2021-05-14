@@ -5,7 +5,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   CartesianGrid,
 } from "recharts";
 import Accordion from "@material-ui/core/Accordion";
@@ -17,30 +16,23 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { StoreContext } from "../store";
 import styles from "../styles/Info.module.css";
 
-const style = {
-  top: "50%",
-  right: 0,
-  transform: "translate(0, -50%)",
-  lineHeight: "24px",
-};
-
 const Info = () => {
   const [expanded, setExpanded] = useState(true);
   const [state, _] = useContext(StoreContext);
-
-  const data = [
-    { name: "Country A", population: 2423444 },
-    { name: "Country B", population: 242235 },
-    { name: "Country C", population: 5223340 },
-    { name: "Country D", population: 922322220 },
-    { name: "Country E", population: 1295210000 },
-  ];
 
   const toggleShow = () => setExpanded(!expanded);
 
   useEffect(() => {
     setExpanded(true);
   }, [state.searchItems]);
+
+  if(state.error) {
+    return (
+      <div className={styles.infocontainer}>
+        <p className={`${styles.info} ${styles.error}`}>{state.error}</p>
+      </div>
+    )
+  }
 
   return state.searchItems.length ? (
     <div className={styles.infocontainer}>
@@ -50,10 +42,10 @@ const Info = () => {
           aria-controls="moreinfo"
           id="moreinfo-header"
         >
-          <Typography>More info</Typography>
+          <Typography>Population info</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <div className={`card card-body ${styles.info}`}>
+          <div className={styles.info}>
             <BarChart
               width={350}
               height={300}
@@ -67,7 +59,7 @@ const Info = () => {
             >
               <XAxis dataKey="name" stroke="#8884d8" />
               <YAxis />
-              <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+              <Tooltip wrapperStyle={{ width: 200, backgroundColor: "#ccc" }} />
               <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
               <Bar dataKey="population" fill="#8884d8" barSize={30} />
             </BarChart>

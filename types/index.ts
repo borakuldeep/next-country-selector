@@ -7,4 +7,5 @@ export type ICountry = {
 export interface IState {
     searchItems: string[]
     searchDetails: ICountry[]
+    error: string
 }
